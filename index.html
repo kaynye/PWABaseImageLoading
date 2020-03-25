@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My super web app</title>
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      height: 100%;
+      width: 100%;
+      background-color: #fefefe;
+      font-family: sans-serif;
+    }
+    h1 {
+      padding: 0;
+      margin: 0;
+    }
+    #app > header {
+      text-align: center;
+      position: sticky;
+      top: 0;
+      background-color: royalblue;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 56px;
+      color: #ffffff;
+      z-index: 10;
+    }
+    #app > main {
+      padding: 0 1rem;
+      padding-top: 1rem;
+    }
+  </style>
+  <link rel="stylesheet" href="style/card.css">
+</head>
+<body>
+  <section id="app">
+    <header>
+      <h1>Blur Up</h1>
+    </header>
+    <main></main>
+  </section>
+  <script type="module" src="/js/App.js"></script>
+</body>
+</html>
