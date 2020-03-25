@@ -28,6 +28,16 @@
     return card;
   });
 
+  setTimeout(() => {
+    cards.forEach(card => {
+      const cover = card.querySelector('img');
+      cover.src = cover.dataset.src;
+
+      const placeholder = card.querySelector('.placeholder');
+      placeholder.classList.add('fade');
+    });
+  }, 2000);
+
 })();
 
 function initCard(card, data) {
@@ -39,5 +49,5 @@ function initCard(card, data) {
   image.alt = data.content.title;
 
   // ...
-  
+
 }

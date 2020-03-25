@@ -35,3 +35,32 @@
 .card main {
   padding: 0.25rem 0.5rem;
 }
+
+/**
+  * Persist animation using : animation-fill-mode set to forward 
+  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/animation-fill-mode
+  */
+.fade {
+  -webkit-animation: fadeout 2s forwards; /* Safari and Chrome */
+  -moz-animation: fadeout 2s forwards; /* Firefox */
+  -ms-animation: fadeout 2s forwards; /* Internet Explorer */
+  -o-animation: fadeout 2s forwards; /* Opera */
+  animation: fadeout 2s forwards;
+}
+
+@keyframes fadeout {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Firefox */
+@-moz-keyframes fadeout {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* Safari and Chrome */
+@-webkit-keyframes fadeout {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
