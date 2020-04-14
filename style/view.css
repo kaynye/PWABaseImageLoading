@@ -1,57 +1,52 @@
-.card {
+.view {
   position: relative;
-  margin-bottom: 1rem;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  box-shadow: 0px 1px 2px 0px hsla(0, 0%, 0%, 0.44);
+  margin-bottom: 12px;
+  min-height: 100%;
+  background-color: var(--app-card-color);
+  margin: -0.25rem -0.5rem;
 }
-
-.card header {
-  position: relative;
-  min-height: 30vh;
-  padding: 0;
-  background-color: rgba(38, 38, 38, 0.64);
-}
-
-.card a {
+.view a {
+  display: block;
   text-decoration: none;
-  color: inherit;
 }
 
-.card img {
+.view figure {
+  position: relative;
+  min-height: 38vh;
+  padding: 0;
+  margin: 0;
+  background-color: hsla(0, 0%, 15%, 0.64);
+}
+.view img {
   display: block;
   object-fit: cover;
   width: 100%;
   height: auto;
-  max-height: 30vh;
+  max-height: 40vh;
 }
-
-.card header .placeholder {
+.view .placeholder {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
   position: absolute;
   top: 0;
-  bottom: 0;
   left: 0;
   right: 0;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
+  bottom: 0;
 }
-
-.card main {
-  padding: 0.25rem 0.5rem;
+.view main {
+  height: 100%;
+  padding: 1rem;
+  background-color: var(--app-card-color);
 }
-
-.card main h1 {
-  font-weight: 500;
-  font-size: 1.2rem;
+.view main h1 {
+  font-size: 1.6rem;
+  margin: 0;
+  padding: 1rem 0;
 }
-.card main p {
-  padding-top: 0.25rem;
-  font-size: 0.75rem;
-  color: #6D6D6D;
+.view main p {
+  font-size: 1.3rem;
 }
-
-
 /**
   * Persist animation using : animation-fill-mode set to forward 
   * @see https://developer.mozilla.org/en-US/docs/Web/CSS/animation-fill-mode
@@ -64,9 +59,10 @@
   animation: fadeout 2s forwards;
 }
 
+/* Key frame animation */
 @keyframes fadeout {
   from { opacity: 1; }
-  to { opacity: 0; }
+  to   { opacity: 0; }
 }
 
 /* Firefox */
@@ -79,4 +75,12 @@
 @-webkit-keyframes fadeout {
   from { opacity: 1; }
   to   { opacity: 0; }
+}
+
+/* Wide layout: when the viewport width is bigger than 460px, layout
+changes to a wide layout. */
+@media (min-width: 460px) {
+  .view main {
+    padding: 0 10%;
+  }
 }

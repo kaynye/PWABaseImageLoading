@@ -1,92 +1,70 @@
 'user strict';
+import page from '/node_modules/page/page.mjs';
 
 (async () => {
-  const style = document.createElement('link');
-  style.rel = "stylesheet";
-  style.href = "/style/card.css";
-  document.head.appendChild(style);
-
   const app = document.querySelector('#app main');
 
   const result = await fetch('/data/spacex.json');
   const data = await result.json();
-  
-  const constructor = document.createElement('div');
-  constructor.innerHTML = `
-    <section class="card">
-      <header>
-      <figure>
-        <div class="placeholder"></div>
-          <img src="" alt="">
-        </figure>
-      </header>
-      <main>
-        <h1></h1>
-        <p></p>
-      </main>
-    </section>
-  `;
-  
-  const cards = data.map(item => {
-    const card = constructor
-      .querySelector('.card')
-      .cloneNode(true);
 
-    initCard(card, item);
-    app.appendChild(card);
-    return card;
+  const skeleton = app.querySelector('.skeleton');
+  skeleton.setAttribute('hidden', '');
+
+  const homeCtn = app.querySelector('[page=home]');
+  const readCtn = app.querySelector('[page=read]');
+
+  const pages = [
+    homeCtn,
+    readCtn    
+  ];
+
+  page('/', async ctx => {
+    const module = await import('./view/home.js');
+    const Home = module.default;
+
+    Home(homeCtn, data);
+
+    pages.forEach(page => page.removeAttribute('active'));
+    homeCtn.setAttribute('active', true);
+
+    const docTitle = document.head.querySelector('title');
+    document.title = `${docTitle.dataset.base} - Home`;
   });
 
-  // setTimeout(() => {
-  //   cards.forEach(card => {
-  //     const cover = card.querySelector('img');
-  //     cover.src = cover.dataset.src;
+  page('/read/:slug', async ctx => {
+    const module = await import('./view/read.js');
+    const Read = module.default;
+    
+    const readStyle = document.head.querySelectorAll('#read-style');
+    if (!readStyle.length) {
+      const link = document.createElement('link');
+      link.id = 'read-style';
+      link.rel = "stylesheet";
+      link.href = '/style/view.css';
+      document.head.appendChild(link);
+    }
 
-  //     const placeholder = card.querySelector('.placeholder');
-  //     placeholder.classList.add('fade');
-  //   });
-  // }, 2000);
+    const slug = ctx.params.slug;
+    if (slug) {
+      const article = data.find(item => _slugify(item.content.title) === slug);
+      Read(readCtn, article);
 
-  /**
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
-   */
-  const options = {
-    rootMarging : '0px 0px 0px 0px'
-  };
+      pages.forEach(page => page.removeAttribute('active'));
+      readCtn.setAttribute('active', true);
 
-  const callback = (entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const image = entry.target;
-        image.src = image.dataset.src;
-
-        image.onload = () => {
-          image.parentNode.querySelector('.placeholder').classList.add('fade');
-        }
-      }
-    });
-  }
-
-  const io = new IntersectionObserver(callback, options);
-  cards.forEach(card => {
-    const image = card.querySelector('img');
-    io.observe(image);
+      const docTitle = document.head.querySelector('title');
+      document.title = `${docTitle.dataset.base} - ${article.content.title}`;
+    }
   });
+
+  page();
 })();
 
-
-function initCard(card, data) {
-  const placeholder = card.querySelector('.placeholder');
-  placeholder.style.cssText = `background-image: url(${data.placeholder})`;
-
-  const image = card.querySelector('img');
-  image.dataset.src = data.image;
-  image.alt = data.content.title;
-
-  const title = card.querySelector('h1');
-  title.innerHTML = data.content.title;
-
-  const description = card.querySelector('p');
-  description.innerHTML = data.content.description;
-
+function _slugify(text) {
+  return text.toString().toLowerCase()
+    .replace(/\s+/g, '-')           // Replace spaces with -
+    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+    .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+    .replace(/^-+/, '')             // Trim - from start of text
+    .replace(/-+$/, '');            // Trim - from end of text
 }
