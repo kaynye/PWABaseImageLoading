@@ -1,31 +1,38 @@
 'user strict';
 
 (async () => {
- const app = document.querySelector('#app main');
+  const style = document.createElement('link');
+  style.rel = "stylesheet";
+  style.href = "/style/card.css";
+  document.head.appendChild(style);
+
+  const app = document.querySelector('#app main');
 
   const result = await fetch('/data/spacex.json');
   const data = await result.json();
   
+  const constructor = document.createElement('div');
+  constructor.innerHTML = `
+    <section class="card">
+      <header>
+      <figure>
+        <div class="placeholder"></div>
+          <img src="" alt="">
+        </figure>
+      </header>
+      <main>
+        <h1></h1>
+        <p></p>
+      </main>
+    </section>
+  `;
   
   const cards = data.map(item => {
-    const constructor = document.createElement('div');
-    constructor.innerHTML = `
-      <section class="card">
-        <header>
-        <figure>
-          <div class="placeholder"></div>
-            <img src="" alt="">
-          </figure>
-        </header>
-        <main>
-          <h1></h1>
-          <p></p>
-        </main>
-      </section>
-    `;
-    const card = constructor.querySelector('.card');
-    initCard(card, item);
+    const card = constructor
+      .querySelector('.card')
+      .cloneNode(true);
 
+    initCard(card, item);
     app.appendChild(card);
     return card;
   });
@@ -75,11 +82,11 @@ function initCard(card, data) {
   const image = card.querySelector('img');
   image.dataset.src = data.image;
   image.alt = data.content.title;
-  
-  const title = card.querySelector('h1');
-  title.innerText = data.content.title;
 
-  const descritption = card.querySelector('p');
-  descritption.innerText = data.content.description;
+  const title = card.querySelector('h1');
+  title.innerHTML = data.content.title;
+
+  const description = card.querySelector('p');
+  description.innerHTML = data.content.description;
 
 }
