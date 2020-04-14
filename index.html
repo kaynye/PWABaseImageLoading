@@ -96,6 +96,15 @@
   <link rel="preload" href="/style/card.css" as="style">
   <link rel="preload" href="/style/view.css" as="style">
   <link rel="preload" href="/js/view/home.js" as="script" crossorigin="anonymous">
+    <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js', {
+        scope: '/'
+      });
+    } else {
+      console.log('Service worker not supported');
+    }
+  </script>
 </head>
 <body>
   <section id="app">
