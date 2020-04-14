@@ -1,6 +1,6 @@
 console.log('Service worker registration');
 
-const cacheVersion = 'v1';
+const cacheVersion = 'v2';
 
 self.addEventListener('install', function(event) {
   event.waitUntil(
@@ -13,6 +13,7 @@ self.addEventListener('install', function(event) {
           '/js/view/home.js',
           '/js/view/read.js',
           '/style/card.css',
+          '/style/view.css',
         ]);
       })
   );
@@ -41,3 +42,9 @@ self.addEventListener('fetch', function(event) {
   }
 });
 
+
+self.addEventListener('message', event => {
+  if (event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
