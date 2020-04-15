@@ -1,13 +1,28 @@
-'user strict';
+'use strict';
 import page from '/node_modules/page/page.mjs';
+import checkConnectivity from './network.js';
 
 (async () => {
+  document.offline = false;
   const app = document.querySelector('#app main');
   window.addEventListener('beforeinstallprompt', e => {
     console.log('Application is ready to install');
     e.preventDefault();
     window.installPrompt = e;
   });
+
+  document.addEventListener('conectivity-changed', e => {
+    const root = document.documentElement;
+    document.offline = !e.detail;
+    if (e.detail) {
+      console.log('Back online');
+      root.style.setProperty('--app-blue', '#007eef');
+    } else {
+      console.log('Offline mode');
+      root.style.setProperty('--app-blue', '#7D7D7D');
+    }
+  });
+  checkConnectivity({});
 
   const result = await fetch('/data/spacex.json');
   const data = await result.json();
