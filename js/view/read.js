@@ -1,9 +1,10 @@
 export default function Read(page, data) {
-  // page.innerHTML = "";
+  page.innerHTML = "";
   const constructor = document.createElement('div');
   constructor.innerHTML = `
   <article class="view">
     <header><figure><div class="placeholder"></div><img src="" alt=""></figure></header>
+    <div><button class="install hidden">Install</button></div>
     <main><h1></h1><p></p></main>
   </article>
   `;

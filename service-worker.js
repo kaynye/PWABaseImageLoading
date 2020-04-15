@@ -8,7 +8,7 @@ self.addEventListener('install', function(event) {
       .then(function(cache) {
         return cache.addAll([
           '/',
-          '/index.html',
+          // '/index.html',
           '/js/app.js',
           '/js/view/home.js',
           '/js/view/read.js',
@@ -17,6 +17,10 @@ self.addEventListener('install', function(event) {
         ]);
       })
   );
+});
+
+self.addEventListener('activated', function(event) {
+  event.waitUntil(clients.claim());
 });
 
 self.addEventListener('fetch', function(event) {
@@ -42,9 +46,10 @@ self.addEventListener('fetch', function(event) {
   }
 });
 
-
-self.addEventListener('message', event => {
+self.addEventListener('message', function (event) {
   if (event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
 });
+
+

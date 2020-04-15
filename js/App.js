@@ -3,6 +3,11 @@ import page from '/node_modules/page/page.mjs';
 
 (async () => {
   const app = document.querySelector('#app main');
+  window.addEventListener('beforeinstallprompt', e => {
+    console.log('Application is ready to install');
+    e.preventDefault();
+    window.installPrompt = e;
+  });
 
   const result = await fetch('/data/spacex.json');
   const data = await result.json();
@@ -45,16 +50,37 @@ import page from '/node_modules/page/page.mjs';
     }
 
     const slug = ctx.params.slug;
-    if (slug) {
-      const article = data.find(item => _slugify(item.content.title) === slug);
-      Read(readCtn, article);
+    const article = data.find(item => _slugify(item.content.title) === slug);
+    Read(readCtn, article);
 
-      pages.forEach(page => page.removeAttribute('active'));
-      readCtn.setAttribute('active', true);
+    pages.forEach(page => page.removeAttribute('active'));
+    readCtn.setAttribute('active', true);
 
-      const docTitle = document.head.querySelector('title');
-      document.title = `${docTitle.dataset.base} - ${article.content.title}`;
-    }
+    const docTitle = document.head.querySelector('title');
+    document.title = `${docTitle.dataset.base} - ${article.content.title}`;
+
+    
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+    
+    const btn = readCtn.querySelector('.install');
+    btn.addEventListener('click', () => {
+      window.installPrompt.prompt();
+      window.installPrompt.userChoice
+        .then(choice => {
+          if ( choice.outcome === 'accepted' ) {
+            console.log('Installation accepted');
+          } else {
+            console.log('Installation refused');
+          }
+        });
+      window.installPrompt = null;
+    });
+    setTimeout(() => {
+      if (window.installPrompt) {
+        btn.classList.remove('hidden');
+      }
+    }, 3000);
   });
 
   page();

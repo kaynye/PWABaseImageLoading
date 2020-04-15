@@ -3,28 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- See https://goo.gl/OOhYW5 -->
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- See https://goo.gl/qRE0vM -->
+  <meta name="theme-color" content="#42a5f5">
+
+  <!-- Add to homescreen for Chrome on Android. Fallback for manifest.json -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Get all the information you doesn't know you wanted !">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="News feed 📰">
+
+  <!-- Homescreen icons -->
+  <link rel="apple-touch-icon" href="/images/manifest/icon-48x48.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/images/manifest/icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="96x96" href="/images/manifest/icon-96x96.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/images/manifest/icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="/images/manifest/icon-192x192.png">
+
+  <!-- Tile icon for Windows 8 (144x144 + tile color) -->
+  <meta name="msapplication-TileImage" content="/images/manifest/icon-144x144.png">
+  <meta name="msapplication-TileColor" content="#42a5f5">
+  <meta name="msapplication-tap-highlight" content="no">
+
   <title data-base="News feed 📰">News feed 📰</title>
+  <meta name="description" content="Get all the information you doesn't know you wanted !">
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js', {
-        scope: '/'
-      })
-        .then(registration => {
+      window.addEventListener('load', async () => {
+        let refreshing = false;
+
+        navigator.serviceWorker.register('/service-worker.js', {
+          scrope: '/'
+        }).then(registration => {
           setInterval(() => {
             console.log('Checking for new service workder');
             registration.update();
-          }, 10 * 1000);
+          }, 10*1000);
+
+          if (registration.waiting && navigator.serviceWorker.controller) {
+            document.newWorker = registration.waiting;
+            const response = confirm('A new version of your application is awaiable, would you like to update ?');
+            if (response) document.newWorker.postMessage({ type: 'SKIP_WAITING' });
+          }
 
           registration.addEventListener('updatefound', () => {
             console.log('Service Worker update detected!');
-            const newWorker= registration.installing;
+            document.newWorker = registration.installing;
   
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            document.newWorker.addEventListener('statechange', () => {
+              if (document.newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                 const response = confirm('A new version of your application is awaiable, would you like to update ?');
-                if (response) newWorker.postMessage({ type: 'SKIP_WAITING' });
+                if (response) document.newWorker.postMessage({ type: 'SKIP_WAITING' });
               }
-            });
+            })
           });
 
           navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -33,8 +69,9 @@
             refreshing = true;
           });
         });
+      });
     } else {
-      console.log('Service worker not supported');
+      console.log("Sorry you browser doesn't support service worker");
     }
   </script>
   <style>
